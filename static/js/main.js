@@ -1,7 +1,8 @@
 import { boardsManager } from "./boardsManager.js";
 
 function init() {
-  boardsManager.loadBoards()
+  boardsManager.loadBoards();
+  boardsManager.addBoard();
 }
 
 init();

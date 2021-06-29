@@ -41,3 +41,28 @@ def get_cards_for_board(board_id):
         , {"board_id": board_id})
 
     return matching_cards
+
+
+def add_board(board_title):
+    ret = data_manager.execute_select(
+        """
+        INSERT INTO boards(title)
+        VALUES (%(board_title)s)
+        RETURNING id, title
+        ;
+        """
+        , {"board_title": board_title})
+    return ret[0]
+
+
+def get_statuses():
+    """
+    Gather all statuses
+    :return:
+    """
+    return data_manager.execute_select(
+        """
+        SELECT (title) FROM statuses
+        ;
+        """
+    )

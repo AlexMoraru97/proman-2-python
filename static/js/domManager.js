@@ -1,4 +1,8 @@
 export let domManager = {
+  deleteChildren(parentIdentifier) {
+    let parent = document.querySelector(parentIdentifier);
+    parent.innerHTML = null;
+  },
   addChild(parentIdentifier, childContent) {
       let parent = document.querySelector(parentIdentifier);
       if (parent) {
@@ -14,5 +18,5 @@ export let domManager = {
       } else {
           console.error("could not find such html element: " + parentIdentifier)
       }
-  }
+  },
 };

@@ -57,4 +57,3 @@ def execute_select(statement, variables=None, fetchall=True):
             cursor.execute(statement, variables)
             result_set = cursor.fetchall() if fetchall else cursor.fetchone()
     return result_set
-
