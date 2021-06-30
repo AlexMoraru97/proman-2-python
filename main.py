@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, jsonify
+from flask import Flask, render_template, url_for, request
 from util import json_response
 
 import queires
@@ -39,6 +39,7 @@ def get_statuses():
     """
     All statuses
     """
+    # print(queires.get_statuses())
     return queires.get_statuses()
 
 
@@ -46,12 +47,21 @@ def get_statuses():
 @json_response
 def add_board():
     new_board_name = request.json.get("boardTitle")
-    print(new_board_name)
-    idx, title = queires.add_board(new_board_name)
-    # print(idx)
-    # return
-    return {'id': idx, 'title': title}
+    idx = queires.add_board(new_board_name)['id']
+    return {'id': idx, 'title': new_board_name}
 
+
+@app.route("/add-card", methods=["POST"])
+@json_response
+def add_card():
+    card_order = queires.get_max_card_order_from_board_by_status_id(1, 1).get("max") + 1
+    card_title = request.json.get("cardTitle")
+    board_id = request.json.get("boardId")
+    status_id = request.json.get("statusId")
+    return queires.add_card(board_id, status_id, card_title, card_order)
+
+
+# add_card()
 
 # @app.route("/update-board", methods=["PUT"])
 # @json_response

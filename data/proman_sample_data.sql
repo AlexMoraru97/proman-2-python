@@ -55,18 +55,18 @@ INSERT INTO statuses(title) VALUES ('done');
 INSERT INTO boards(title) VALUES ('Board 1');
 INSERT INTO boards(title) VALUES ('Board 2');
 
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 1', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 2', 2);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 2, 'in progress card', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 3, 'planning', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 4, 'done card 1', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 4, 'done card 1', 2);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 1, 'new card 1', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 1, 'new card 2', 2);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 2, 'in progress card', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 3, 'planning', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 1', 1);
-INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 1', 2);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 1 board 1', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 2 board 1', 2);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 2, 'in progress card board 1', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 3, 'planning card board 1', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 4, 'done card 1 board 1', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 4, 'done card 2 board 1', 2);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 1, 'new card 1 board 2', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 1, 'new card 2 board 2', 2);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 2, 'in progress card board 2', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 3, 'planning card board 2', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 1 board 2', 1);
+INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 2 board 2', 2);
 
 ---
 --- add constraints

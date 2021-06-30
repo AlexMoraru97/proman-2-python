@@ -17,36 +17,37 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
         <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     </head>
-    <body>
+    <body id="body">
       <!-- As a heading -->
       <nav class="navbar navbar-light bg-info">
         <div class="container-fluid">
           <span class="navbar-brand mb-0 h1">ProMan</span>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Create new board</button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#boardModal" data-bs-whatever="@mdo">Create new board</button>
+{#          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Edit board</button>#}
         </div>
       </nav>
       {% block body_content %}{% endblock %}
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Board title:</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="form-board-title">
-                <div class="modal-body">
-                    <div class="mb-3">
-                      <label for="boardTitle" class="col-form-label">Board name:</label>
-                      <input type="text" class="form-control" id="boardTitle" name="boardTitle">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Add Board</button>
-                </div>
-            </form>
-          </div>
-        </div>
-      </div>
+{#      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+{#        <div class="modal-dialog">#}
+{#          <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#              <h5 class="modal-title" id="exampleModalLabel">Board title:</h5>#}
+{#              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#            </div>#}
+{#            <form id="form-board-title">#}
+{#                <div class="modal-body">#}
+{#                    <div class="mb-3">#}
+{#                      <label for="boardTitle" class="col-form-label">Board name:</label>#}
+{#                      <input type="text" class="form-control" id="boardTitle" name="boardTitle">#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="modal-footer">#}
+{#                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+{#                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>#}
+{#                </div>#}
+{#            </form>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
     </body>
 </html>

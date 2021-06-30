@@ -48,10 +48,22 @@ def add_board(board_title):
         """
         INSERT INTO boards(title)
         VALUES (%(board_title)s)
-        RETURNING id, title
+        RETURNING id
         ;
         """
         , {"board_title": board_title})
+    return ret[0]
+
+
+def add_card(board_id, status_id, title, card_order):
+    ret = data_manager.execute_select(
+        """
+        INSERT INTO cards(board_id, status_id, title, card_order)
+        VALUES (%(board_id)s, %(status_id)s, %(title)s, %(card_order)s)
+        RETURNING *
+        ;
+        """
+        , {"board_id": board_id, "status_id": status_id, "title": title, "card_order": card_order})
     return ret[0]
 
 
@@ -62,7 +74,19 @@ def get_statuses():
     """
     return data_manager.execute_select(
         """
-        SELECT (title) FROM statuses
+        SELECT * FROM statuses
         ;
         """
     )
+
+
+def get_max_card_order_from_board_by_status_id(board_id, status_id):
+    max_card_order = data_manager.execute_select(
+        """
+        SELECT max(card_order) FROM cards
+        WHERE board_id = %(board_id)s AND status_id = %(status_id)s
+        ;
+        """
+        , {"board_id": board_id, "status_id": status_id}, False)
+
+    return max_card_order

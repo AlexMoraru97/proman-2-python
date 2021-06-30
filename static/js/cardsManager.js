@@ -3,33 +3,35 @@ import { htmlFactory, htmlTemplates } from "./htmlFactory.js";
 import { domManager } from "./domManager.js";
 
 export let cardsManager = {
-    loadCards: async function (boardId) {
+    loadCards: async function (boardId, targetClicks) {
+        if (targetClicks === 1) {
+            const cards = await dataHandler.getCardsByBoardId(boardId);
+            // domManager.addChild(`.board-column[data-board-id="${boardId}"]`, '<button type="button" class="btn btn-dark">Dark</button>')
+            for (let card of cards) {
+                const cardBuilder = htmlFactory(htmlTemplates.card);
+                const content = cardBuilder(card);
+                domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="${card.status_id}"]`, content);
+                // cardsManager.addCard(boardId, card.status_id);
+                // domManager.addEventListener(`.card[data-card-id="${card.id}"]`, "click", deleteButtonHandler)
+            }
+        }
+    },
+    addCard: async function (boardId, targetClicks) {
         // const statuses = await dataHandler.getStatuses();
-        // domManager.deleteChildren(`.accordion-body[data-board-id="${boardId}"]`);
-        // for (let status of statuses) {
-        //     const tableBuilder = htmlFactory(htmlTemplates.table);
-        //     const table = tableBuilder()
-        //     domManager.addChild(`#board-body[data-board-id="${boardId}"]`, table);
-        //     domManager.addChild("#table-head-row", `<th id="${status.title.split(" ")[0]}">`);
-        //     domManager.addChild(`#${status.title.split(" ")[0]}`, status.title.toUpperCase());
-        // }
-        // const statuses = await dataHandler.getStatuses();
-        // const tableBuilder = htmlFactory(htmlTemplates.table);
-        // const table = tableBuilder();
-        // domManager.addChild(`#board-body[data-board-id="${boardId}"]`, table);
-        // const cards = await dataHandler.getCardsByBoardId(boardId);
-        domManager.deleteChildren(`.accordion-body[data-board-id="${boardId}"]`)
-        // for (let status of statuses) {
-        //     // const tableBuilder = htmlFactory(htmlTemplates.table);
-        //     // const table = tableBuilder();
-        // }
-        // for (let card of cards) {
-        //     const cardBuilder = htmlFactory(htmlTemplates.card);
-        //     const content = cardBuilder(card)
-        //     // domManager.addChild(`#board-body[data-board-id="${boardId}"]`, table);
-        //     domManager.addChild(`#board-body[data-board-id="${boardId}"]`, content)
-        //     domManager.addEventListener(`.card[data-card-id="${card.id}"]`, "click", deleteButtonHandler)
-        // }
+        if (targetClicks === 1) {
+            const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-card-title", "cardTitle", "Card title: ", "cardModal");
+            domManager.addChild("#body", modalContent);
+            domManager.addEventListener(`#form-card-title`, 'submit', async function (event) {
+                event.preventDefault();
+                let cardTitle = event.target.cardTitle.value;
+                const newCard = await dataHandler.createNewCard(cardTitle, boardId, 1);
+                const cardContent = htmlFactory(htmlTemplates.card)(newCard);
+                console.log(boardId);
+                domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="1"]`, cardContent);
+                // domManager.addEventListener(`#toggle-board-button[data-board-id="${newBoard.id}"]`, "click", showHideButtonHandler);
+                event.target.cardTitle.value = '';
+            })
+        }
     },
 }
 

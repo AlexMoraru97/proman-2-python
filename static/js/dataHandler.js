@@ -9,6 +9,7 @@ export let dataHandler = {
     },
     getStatuses: async function () {
         let response = await apiGet("/get-statuses")
+        // console.log(response);
         return response
         // the statuses are retrieved and then the callback function is called with the statuses
     },
@@ -17,6 +18,7 @@ export let dataHandler = {
     },
     getCardsByBoardId: async function (boardId) {
         let response = await apiGet(`/get-cards/${boardId}`)
+        // console.log(response);
         return response
     },
     getCard: async function (cardId) {
@@ -31,6 +33,11 @@ export let dataHandler = {
         // creates new board, saves it and calls the callback function with its data
     },
     createNewCard: async function (cardTitle, boardId, statusId) {
+        let request = await apiPost("/add-card", {"cardTitle": cardTitle, "boardId": boardId, "statusId": statusId});
+        if (request) {
+            return request;
+        }
+        return false;
         // creates new card, saves it and calls the callback function with its data
     }
 };
