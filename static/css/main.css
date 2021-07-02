@@ -4,6 +4,9 @@
     --status-2: #594300;
     --status-3: #525900;
     --status-4: #085900;
+    --status-5: #510059;
+    --status-6: #000859;
+    --status-7: #59003f;
 }
 
 body{
@@ -66,7 +69,8 @@ section.board{
 
 .board-columns{
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    /*flex-wrap: nowrap;*/
 }
 
 .board-column{
@@ -113,6 +117,18 @@ section.board{
 
 .board-column:nth-of-type(4) .card{
     background: var(--status-4);
+}
+
+.board-column:nth-of-type(5) .card{
+    background: var(--status-5);
+}
+
+.board-column:nth-of-type(6) .card{
+    background: var(--status-6);
+}
+
+.board-column:nth-of-type(7) .card{
+    background: var(--status-7);
 }
 
 .card-remove{

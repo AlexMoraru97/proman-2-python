@@ -90,3 +90,112 @@ def get_max_card_order_from_board_by_status_id(board_id, status_id):
         , {"board_id": board_id, "status_id": status_id}, False)
 
     return max_card_order
+
+
+def edit_board_title(board_id, new_title):
+    data_manager.execute(
+        """
+        UPDATE boards
+        SET title = %(new_title)s
+        WHERE id = %(board_id)s
+        ;
+        """
+        , {"board_id": board_id, "new_title": new_title})
+
+
+def edit_card_title(card_id, new_title):
+    data_manager.execute(
+        """
+        UPDATE cards
+        SET title = %(new_title)s
+        WHERE id = %(card_id)s
+        ;
+        """
+        , {"card_id": card_id, "new_title": new_title})
+
+
+def add_status(status_title):
+    ret = data_manager.execute_select(
+        """
+        INSERT INTO statuses(title)
+        VALUES (%(status_title)s)
+        RETURNING id
+        ;
+        """
+        , {"status_title": status_title}, False)
+    return ret
+
+
+def delete_board(board_id):
+    result = data_manager.execute_select(
+        """
+            DELETE FROM cards
+            WHERE board_id=%(board_id)s;
+
+            DELETE FROM boards
+            WHERE id=%(board_id)s
+            RETURNING id
+        """
+        , {"board_id": board_id})
+    return result
+
+
+def delete_card(card_id):
+    result = data_manager.execute_select(
+        """
+            DELETE FROM cards
+            WHERE id=%(card_id)s
+            RETURNING id
+        """
+        , {"card_id": card_id})
+    return result
+
+
+def get_user_id(username):
+    user_id = data_manager.execute_select(
+        """
+        SELECT id
+        FROM user_account
+        WHERE user_name=%(username)s
+        """
+        , {'username': username})
+    return user_id
+
+
+def get_user_pass(username):
+    password = data_manager.execute_select(
+        """
+        SELECT password
+        FROM user_account
+        WHERE user_name=%(username)s
+        """
+        , {'username': username})
+    return password
+
+
+def add_user(username, password):
+    data_manager.execute(
+        """
+        INSERT INTO user_account(user_name, password) 
+        VALUES (%(username)s, %(password)s)
+        """
+        , {'username': username, 'password': password})
+
+
+def get_user_names():
+    users = data_manager.execute_select("""
+        SELECT user_name
+        FROM user_account
+        """)
+    return users
+
+
+def edit_card_status(card_id, status_id, new_status_id):
+    data_manager.execute(
+        """
+        UPDATE cards
+        SET status_id = %(new_status_id)s
+        WHERE id = %(card_id)s
+        ;
+        """
+        , {"card_id": card_id, "status_id": status_id, "new_status_id": new_status_id})

@@ -5,36 +5,71 @@ import { domManager } from "./domManager.js";
 export let cardsManager = {
     loadCards: async function (boardId, targetClicks) {
         if (targetClicks === 1) {
+            domManager.addChild(`#toggle-board-button[data-board-id="${boardId}"]`, htmlFactory(htmlTemplates.buttonBuilder)(`#cardModal${boardId}`, 'Add new card'));
+            domManager.addChild(`#toggle-board-button[data-board-id="${boardId}"]`, htmlFactory(htmlTemplates.buttonBuilder)(`#statusModal${boardId}`, 'Add new status'));
             const cards = await dataHandler.getCardsByBoardId(boardId);
-            // domManager.addChild(`.board-column[data-board-id="${boardId}"]`, '<button type="button" class="btn btn-dark">Dark</button>')
             for (let card of cards) {
                 const cardBuilder = htmlFactory(htmlTemplates.card);
                 const content = cardBuilder(card);
                 domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="${card.status_id}"]`, content);
-                // cardsManager.addCard(boardId, card.status_id);
-                // domManager.addEventListener(`.card[data-card-id="${card.id}"]`, "click", deleteButtonHandler)
+                domManager.addEventListener(`.card-remove[data-card-id="${card.id}"]`, "click", deleteCardButtonHandler);
+                editCardTitle(card);
             }
+
         }
     },
     addCard: async function (boardId, targetClicks) {
-        // const statuses = await dataHandler.getStatuses();
         if (targetClicks === 1) {
-            const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-card-title", "cardTitle", "Card title: ", "cardModal");
-            domManager.addChild("#body", modalContent);
-            domManager.addEventListener(`#form-card-title`, 'submit', async function (event) {
+            const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${boardId}`, `cardTitle`, "Card title: ", `cardModal${boardId}`, "");
+
+            domManager.addChild("#body", modalContent);`label>ddind>`
+            domManager.addEventListener(`#form-card-title${boardId}`, 'submit', async function (event) {
                 event.preventDefault();
                 let cardTitle = event.target.cardTitle.value;
                 const newCard = await dataHandler.createNewCard(cardTitle, boardId, 1);
                 const cardContent = htmlFactory(htmlTemplates.card)(newCard);
-                console.log(boardId);
                 domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="1"]`, cardContent);
-                // domManager.addEventListener(`#toggle-board-button[data-board-id="${newBoard.id}"]`, "click", showHideButtonHandler);
+                domManager.addEventListener(`.card-remove[data-card-id="${newCard.id}"]`, "click", deleteCardButtonHandler)
                 event.target.cardTitle.value = '';
+                editCardTitle(newCard);
             })
         }
     },
+    addStatus: async function (boardId, targetClicks, loadBoardColumns) {
+        const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-status-title${boardId}`, `statusTitle`, "Status title: ", `statusModal${boardId}`, "");
+        domManager.addChild("#body", modalContent);
+        domManager.addEventListener(`#form-status-title${boardId}`, 'submit', async function (event) {
+            event.preventDefault();
+            let statusTitle = event.target.statusTitle.value;
+            const newStatus = await dataHandler.addStatus(statusTitle);
+            await loadBoardColumns(boardId, newStatus.id, statusTitle);
+            event.target.statusTitle.value = '';
+            cardsManager.vampiresDiary();
+        })
+    },
+    vampiresDiary: async function () {
+        const allTargets = [];
+        const boardColumns = document.querySelectorAll(".board-column");
+        boardColumns.forEach(board => {
+            allTargets.push(board);
+        })
+        await dragula(allTargets);
+    }
 }
 
-function deleteButtonHandler(clickEvent) {
+function editCardTitle(card) {
+    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${card.id}`, "cardTitle", "Card title: ", `cardModal${card.id}`, `${card.title}`, "");
+    domManager.addChild("#body", modalContent);
+    domManager.addEventListener(`#form-card-title${card.id}`,'submit', async function (event) {
+        event.preventDefault();
+        let input = event.target.cardTitle.value;
+        const response = await dataHandler.editCardTitle(card.id, input)
+        document.getElementById(`card-title${card.id}`).textContent = input;
+    })
 }
 
+async function deleteCardButtonHandler(clickEvent) {
+    let cardId = clickEvent.currentTarget.dataset.cardId;
+    await dataHandler.deleteCard(cardId);
+    document.querySelector(`.card[data-card-id="${cardId}"]`).remove()
+}

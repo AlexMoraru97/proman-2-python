@@ -1,7 +1,10 @@
 export let dataHandler = {
     getBoards: async function () {
-        let response = await apiGet('/get-boards')
-        // console.log(response)
+        let response = await apiGet('/get-boards');
+        return response
+    },
+    editBoardTitle: async function (boardId, newTitle) {
+        let response = await apiPut(`/edit-board-title/${boardId}/${newTitle}`);
         return response
     },
     getBoard: async function(boardId) {
@@ -9,16 +12,18 @@ export let dataHandler = {
     },
     getStatuses: async function () {
         let response = await apiGet("/get-statuses")
-        // console.log(response);
         return response
         // the statuses are retrieved and then the callback function is called with the statuses
     },
     getStatus: async function (statusId) {
         // the status is retrieved and then the callback function is called with the status
     },
+    addStatus: async function (statusTitle) {
+      let response = await apiPost("/add-status", {"statusTitle": statusTitle});
+      return response;
+    },
     getCardsByBoardId: async function (boardId) {
         let response = await apiGet(`/get-cards/${boardId}`)
-        // console.log(response);
         return response
     },
     getCard: async function (cardId) {
@@ -39,7 +44,51 @@ export let dataHandler = {
         }
         return false;
         // creates new card, saves it and calls the callback function with its data
+    },
+    editCardTitle: async function (cardId, newTitle) {
+        let response = await apiPut(`/edit-card-title/${cardId}/${newTitle}`);
+        return response
+    },
+    editCardStatus: async function (cardId, statusId, newStatusId) {
+        let response = await apiPut(`/edit-card-status/${cardId}/${statusId}/${newStatusId}`);
+        return response
+    },
+    deleteBoard: async function (boardId) {
+        let request = await apiDelete(`/delete-board/${boardId}`);
+        if (request) {
+            return request;
+        }
+        return false;
+    },
+    deleteCard: async function (cardId) {
+    let request = await apiDelete(`/delete-card/${cardId}`);
+    if (request) {
+        return request;
     }
+    return false;
+    },
+
+    addUser: async function (username, password) {
+        let request = await apiPost("/register", {"username": username, "password": password});
+        if (request) {
+            return request;
+        }
+        return false;
+    },
+    userLogout: async function () {
+        let request = await apiGet("/logout");
+        if (request) {
+            return request;
+        }
+        return false;
+    },
+    userLogin: async function (username, password) {
+        let request = await apiPost("/login", {"username": username, "password": password});
+        if (request) {
+            return request;
+        }
+        return false;
+    },
 };
 
 async function apiGet(url) {
@@ -53,35 +102,33 @@ async function apiGet(url) {
 }
 
 async function apiPost(url, payload) {
-  try {
-
-      const response = await fetch(url, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload),
-      })
-      console.table(response);
-      if (response.status === 200) {
-          let data = await response.json();
-          console.log(data);
-          return data;
-      }
-  } catch (error) {
-      console.error(error);
-  }
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    })
+    if (response.status === 200) {
+      let data = await response.json();
+      return data;
+    }
 }
 
 async function apiDelete(url) {
+    let response = await fetch(url, {
+        method: 'DELETE',
+    })
+    if (response.status === 200) {
+        let data = response.json()
+        return data
+    }
 }
 
 async function apiPut(url) {
-    // let response = await fetch(url, {
-    //     method: 'PUT',
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: JSON.stringify(payload),
-    // })
-    // if (response.status === 200) {
-    //     let data = response.json()
-    //     return data
-    // }
+    let response = await fetch(url, {
+        method: 'PUT',
+    })
+    if (response.status === 200) {
+        let data = response.json()
+        return data
+    }
 }

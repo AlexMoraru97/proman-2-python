@@ -9,38 +9,63 @@ export let boardsManager = {
         const statuses = await dataHandler.getStatuses();
         for (let board of boards) {
             const boardContent = htmlFactory(htmlTemplates.board)(board);
+            const deleteButton = htmlFactory(htmlTemplates.delete);
             domManager.addChild("#board-container", boardContent);
-            domManager.addChild(`#board-body[data-board-id="${board.id}"]`, '<div style="text-align: center;"><button style="margin-top: 40%" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#cardModal" data-bs-whatever="@mdo">Add card</button></div>')
+            domManager.addChild(`#toggle-board-button[data-board-id="${board.id}"]`, deleteButton(board.id));
             statuses.forEach(status => {
-                loadBoardColumns(board, status);
+                loadBoardColumns(board.id, status.id, status.title);
             })
             domManager.addEventListener(`#toggle-board-button[data-board-id="${board.id}"]`, "click", showHideButtonHandler);
+            domManager.addEventListener(`#delete-board[data-board-id="${board.id}"]`, "click", deleteBoardButtonHandler);
+            editBoardTitle(board);
+
         }
     },
     addBoard: async function () {
         const statuses = await dataHandler.getStatuses();
-        const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-board-title", "boardTitle", "Board title: ", "boardModal");
+        const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-board-title", "boardTitle", "Board title: ", "boardModal", "");
         domManager.addChild("#body", modalContent);
         domManager.addEventListener(`#form-board-title`,'submit', async function (event) {
             event.preventDefault();
             let input = event.target.boardTitle.value;
             const newBoard = await dataHandler.createNewBoard(input);
             const boardContent = htmlFactory(htmlTemplates.board)(newBoard);
+            const deleteBtn = htmlFactory(htmlTemplates.delete);
             domManager.addChild("#board-container", boardContent);
+            domManager.addChild(`#toggle-board-button[data-board-id="${newBoard.id}"]`, deleteBtn(newBoard.id));
             statuses.forEach(status => {
-                loadBoardColumns(newBoard, status);
+                loadBoardColumns(newBoard.id, status.id, status.title);
             })
             domManager.addEventListener(`#toggle-board-button[data-board-id="${newBoard.id}"]`, "click", showHideButtonHandler);
+            domManager.addEventListener(`#delete-board[data-board-id="${newBoard.id}"]`, "click", deleteBoardButtonHandler);
             event.target.boardTitle.value = '';
+            editBoardTitle(newBoard);
         })
     },
 }
 
-function loadBoardColumns(board, status) {
-    const boardColumnContent = htmlFactory(htmlTemplates.boardColumn)(board, status);
-    const boardColumnTitleContent = htmlFactory(htmlTemplates.boardColumnTitle)(status);
-    domManager.addChild(`#board-body[data-board-id="${board.id}"]`, boardColumnContent)
-    domManager.addChild(`.board-column[data-board-id="${board.id}"][data-status-id="${status.id}"]`, boardColumnTitleContent)
+async function deleteBoardButtonHandler(clickEvent) {
+    let boardId = clickEvent.currentTarget.dataset.boardId;
+    await dataHandler.deleteBoard(boardId);
+    document.getElementById('section'+boardId).remove()
+}
+
+function editBoardTitle(board) {
+    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-board-title${board.id}`, "boardTitle", "Board title: ", `boardModal${board.id}`, `${board.title}`, "");
+    domManager.addChild("#body", modalContent);
+    domManager.addEventListener(`#form-board-title${board.id}`,'submit', async function (event) {
+        event.preventDefault();
+        let input = event.target.boardTitle.value;
+        const response = await dataHandler.editBoardTitle(board.id, input)
+        document.getElementById(`board-title${board.id}`).textContent = input;
+    })
+}
+
+function loadBoardColumns(boardID, statusID, statusTitle) {
+    const boardColumnContent = htmlFactory(htmlTemplates.boardColumn)(boardID, statusID);
+    const boardColumnTitleContent = htmlFactory(htmlTemplates.boardColumnTitle)(statusID, statusTitle);
+    domManager.addChild(`#board-body[data-board-id="${boardID}"]`, boardColumnContent)
+    domManager.addChild(`.board-column[data-board-id="${boardID}"][data-status-id="${statusID}"]`, boardColumnTitleContent)
 }
 
 function showHideButtonHandler(clickEvent) {
@@ -50,5 +75,7 @@ function showHideButtonHandler(clickEvent) {
         const boardId = clickEvent.target.dataset.boardId
         cardsManager.loadCards(boardId, target.clicks);
         cardsManager.addCard(boardId, target.clicks);
+        cardsManager.addStatus(boardId, target.clicks, loadBoardColumns);
+        cardsManager.vampiresDiary();
     }
 }
