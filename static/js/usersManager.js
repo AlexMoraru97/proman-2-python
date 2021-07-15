@@ -17,7 +17,7 @@ export let usersManager = {
             }
             event.target.email.value = '';
             event.target.pass.value = '';
-            document.getElementById('registration').hidden = true
+            // document.getElementById('registration').hidden = true
         })
     },
 
