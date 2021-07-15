@@ -61,16 +61,6 @@ function editCardTitle(card) {
     })
 }
 
-function cardTitleTrigger() {
-    const cardsTitle = document.querySelectorAll('.proba');
-    // console.log(cardsTitle)
-    for (let title of cardsTitle) {
-        title.addEventListener('click', (event) => {
-            console.log(event.currentTarget);
-        })
-    }
-}
-
 async function deleteCardButtonHandler(clickEvent) {
     let cardId = clickEvent.currentTarget.dataset.cardId;
     await dataHandler.deleteCard(cardId);
