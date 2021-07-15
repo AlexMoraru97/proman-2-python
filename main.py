@@ -1,13 +1,12 @@
 from flask import Flask, render_template, url_for, request, session
+import util
 from util import json_response
-import uuid
-import bcrypt
-import os
+
 
 import queires
 
 app = Flask(__name__)
-app.secret_key = os.urandom(16)
+app.secret_key = b'\xd1\x963\xbb\xa4\xda>\x82\xf2\xb9\x9a*\x9bz\xed\x1a'
 
 
 @app.route("/")
@@ -15,7 +14,10 @@ def index():
     """
     This is a one-pager which shows all the boards and cards
     """
-    return render_template('index.html')
+    username = None
+    if session:
+        username = session['username']
+    return render_template('index.html', username=username)
 
 
 @app.route("/get-boards")
@@ -37,20 +39,22 @@ def get_cards_for_board(board_id: int):
     return queires.get_cards_for_board(board_id)
 
 
-@app.route("/get-statuses")
+@app.route("/api/get-statuses/<int:board_id>")
 @json_response
-def get_statuses():
+def get_statuses(board_id):
     """
     All statuses
     """
-    return queires.get_statuses()
+    return queires.get_statuses_by_board_id(board_id)
 
 
-@app.route("/add-status", methods=['POST'])
+@app.route("/api/add-status", methods=['POST'])
 @json_response
 def add_status():
     new_status_title = request.json.get("statusTitle")
+    board_id = request.json.get("boardId")
     idx = queires.add_status(new_status_title)['id']
+    queires.add_board_status(board_id, idx)
     return {'id': idx}
 
 
@@ -107,61 +111,32 @@ def delete_card(card_id):
     return {'card_id': card_id}
 
 
-@app.route("/register", methods=['POST'])
+@app.route("/api/register", methods=['POST'])
 @json_response
 def user_registration():
-    new_user_id = request.json.get("username")
-    new_user_pw = request.json.get("password")
-    if is_already_registered(request):
+    username = request.json.get("username")
+    user_pass = request.json.get("password")
+    if util.is_already_registered(request):
         return {'alreadyRegistered': True}
-    queires.add_user(new_user_id, hash_password(new_user_pw))
+    queires.add_user(username, util.hash_password(user_pass))
     return {'success': True}
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/api/login", methods=['POST'])
 @json_response
 def user_login():
     username = request.json.get("username")
-    if are_valid_credentials(request):
+    if util.are_valid_credentials(request):
         session.update({'username': username})
         return {'loginSuccess': True}
     return {'loginSuccess': False}
 
 
-@app.route("/logout")
+@app.route("/api/logout")
 @json_response
 def user_logout():
     session.pop('username', None)
     return {"success": True}
-
-
-def get_new_user_id():
-    user_id = str(uuid.uuid4()).split('-')[4]
-    return user_id
-
-
-def get_user_id(user_name):
-    return queires.get_user_id(user_name)['id'] if user_name else user_name
-
-
-def is_already_registered(json_request):
-    return json_request.json.get('username') in [email['user_name'] for email in queires.get_user_names()]
-
-
-def are_valid_credentials(json_request):
-    if is_already_registered(json_request):
-        user_password = queires.get_user_pass(json_request.form['username'])['password']
-        return is_valid_password(json_request.form['password'], user_password)
-
-
-def hash_password(plain_text_password):
-    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
-    return hashed_bytes.decode('utf-8')
-
-
-def is_valid_password(plain_text_password, hashed_password):
-    hashed_bytes_password = hashed_password.encode('utf-8')
-    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
 
 
 def main():

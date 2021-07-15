@@ -45,7 +45,7 @@ var classes = require('./classes');
 var doc = document;
 var documentElement = doc.documentElement;
 
-function dragula (initialContainers, options) {
+async function dragula (initialContainers, options) {
   // console.log(initialContainers);
   // console.log(initialContainers[0].children)
   // console.log(initialContainers)
@@ -208,7 +208,7 @@ function dragula (initialContainers, options) {
     if (drake.dragging && _mirror) {
       return;
     }
-    if (isContainer(item)) {
+    if (isContainer(item) || item.className === "board-column-title") {
       return; // don't drag container itself
     }
     var handle = item;
@@ -295,31 +295,18 @@ function dragula (initialContainers, options) {
     var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
     var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
 
-    // var dropTargetName = dropTarget.className;
-    // var dropTargetBoardId = dropTarget.dataset.boardId;
-    // var dropTargetStatusId = dropTarget.dataset.statusId;
-    // var targetDropOverZone = document.querySelector(`.${dropTargetName}[data-board-id="${dropTargetBoardId}"][data-status-id="${dropTargetStatusId}"]`);
-    // console.log(dropTarget.children.length);
-    // document.querySelector(`.${dropTarget}[]`)
-    // console.log(dropTarget.className);
-    // console.log(_item);
-    // console.log(dropTarget);
-    // console.log(_item.dataset.cardId);
-    // console.log(_item.dataset.cardStatusId);
-    // console.log(dropTarget.dataset.statusId);
-    // async function edit_status() {
-    const response = await dataHandler.editCardStatus(_item.dataset.cardId, _item.dataset.cardStatusId, dropTarget.dataset.statusId)
-
-    if (dropTarget && ((_copy && o.copySortSource) || (!_copy || dropTarget !== _source))) {
+    if (dropTarget && ((_copy && o.copySortSource) || (!_copy || dropTarget !== _source)) && item.className !== "board-column-title") {
       drop(item, dropTarget);
+      const response = await dataHandler.editCardStatus(item.dataset.cardId, item.dataset.cardStatusId, dropTarget.dataset.statusId)
     } else if (o.removeOnSpill) {
       remove();
     } else {
       cancel();
     }
+
   }
 
-  function drop (item, target) {
+  async function drop (item, target) {
     var parent = getParent(item);
     if (_copy && o.copySortSource && target === _source) {
       parent.removeChild(_item);

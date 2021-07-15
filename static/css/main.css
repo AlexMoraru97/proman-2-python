@@ -1,17 +1,19 @@
 :root{
     --border-radius: 3px;
-    --status-1: #590000;
-    --status-2: #594300;
-    --status-3: #525900;
-    --status-4: #085900;
-    --status-5: #510059;
-    --status-6: #000859;
-    --status-7: #59003f;
+    --status-1: rgba(89, 0, 0, 0.4);
+    --status-2: rgba(89, 67, 0, 0.4);
+    --status-3: rgba(82, 89, 0, 0.4);
+    --status-4: rgba(8, 89, 0, 0.4);
+    --status-5: rgba(81, 0, 89, 0.4);
+    --status-6: rgba(0, 8, 89, 0.4);
+    --status-7: rgba(0, 0, 80, 0.4);
 }
 
 body{
     min-width: 620px;
-    background: #ddd url(http://cdn.backgroundhost.com/backgrounds/subtlepatterns/diagonal-noise.png);
+    background-color: #000000;
+    background-image: url(https://www.transparenttextures.com/patterns/black-mamba.png);
+    /*background: #ddd url(http://cdn.backgroundhost.com/backgrounds/subtlepatterns/diagonal-noise.png);*/
     font-family: sans-serif;
 }
 
@@ -140,6 +142,6 @@ section.board{
     cursor: pointer;
 }
 
-.card-title{
-    padding-right: 16px;
-}
+/*.card-title{*/
+/*    padding-right: 16px;*/
+/*}*/

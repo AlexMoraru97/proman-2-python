@@ -17,6 +17,7 @@ SET default_with_oids = false;
 --- drop tables
 ---
 
+DROP TABLE IF EXISTS board_statuses CASCADE;
 DROP TABLE IF EXISTS statuses CASCADE;
 DROP TABLE IF EXISTS boards CASCADE;
 DROP TABLE IF EXISTS user_account;
@@ -51,6 +52,12 @@ CREATE TABLE cards (
     card_order  INTEGER             NOT NULL
 );
 
+CREATE TABLE board_statuses (
+    id      SERIAL PRIMARY KEY NOT NULL,
+    board_id INTEGER            NOT NULL,
+    status_id INTEGER           NOT NULL
+);
+
 ---
 --- insert data
 ---
@@ -62,6 +69,15 @@ INSERT INTO statuses(title) VALUES ('done');
 
 INSERT INTO boards(title) VALUES ('Board 1');
 INSERT INTO boards(title) VALUES ('Board 2');
+
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 1, 1);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 1, 2);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 1, 3);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 1, 4);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 2, 1);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 2, 2);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 2, 3);
+INSERT INTO board_statuses VALUES (nextval('board_statuses_id_seq'), 2, 4);
 
 INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 1 board 1', 1);
 INSERT INTO cards VALUES (nextval('cards_id_seq'), 1, 1, 'new card 2 board 1', 2);
@@ -76,6 +92,7 @@ INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 3, 'planning card board 2'
 INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 1 board 2', 1);
 INSERT INTO cards VALUES (nextval('cards_id_seq'), 2, 4, 'done card 2 board 2', 2);
 
+
 ---
 --- add constraints
 ---
@@ -88,3 +105,9 @@ ALTER TABLE ONLY cards
 
 ALTER TABLE ONLY boards
     ADD CONSTRAINT fk_boards_user_id FOREIGN KEY (user_id) REFERENCES user_account(id);
+
+ALTER TABLE ONLY board_statuses
+    ADD CONSTRAINT fk_board_id FOREIGN KEY (board_id) REFERENCES boards(id);
+
+ALTER TABLE ONLY board_statuses
+    ADD CONSTRAINT fk_status_id FOREIGN KEY (status_id) REFERENCES statuses(id);

@@ -51,8 +51,8 @@ def add_board(board_title):
         RETURNING id
         ;
         """
-        , {"board_title": board_title})
-    return ret[0]
+        , {"board_title": board_title}, fetchall=False)
+    return ret
 
 
 def add_card(board_id, status_id, title, card_order):
@@ -76,8 +76,18 @@ def get_statuses():
         """
         SELECT * FROM statuses
         ;
-        """
-    )
+        """)
+
+
+def get_statuses_by_board_id(board_id):
+    return data_manager.execute_select(
+        '''
+            SELECT statuses.*
+            from statuses
+                join board_statuses bs on statuses.id = bs.status_id
+                join boards b on b.id = bs.board_id
+            where board_id = %(board_id)s
+        ''', {'board_id': board_id})
 
 
 def get_max_card_order_from_board_by_status_id(board_id, status_id):
@@ -126,6 +136,14 @@ def add_status(status_title):
     return ret
 
 
+def add_board_status(board_id, status_id):
+    data_manager.execute(
+        '''
+            INSERT INTO board_statuses(board_id, status_id)
+            VALUES (%(board_id)s, %(status_id)s)
+        ''', {'board_id': board_id, 'status_id': status_id})
+
+
 def delete_board(board_id):
     result = data_manager.execute_select(
         """
@@ -169,7 +187,7 @@ def get_user_pass(username):
         FROM user_account
         WHERE user_name=%(username)s
         """
-        , {'username': username})
+        , {'username': username}, fetchall=False)
     return password
 
 

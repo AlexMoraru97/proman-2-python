@@ -20,7 +20,7 @@ export let cardsManager = {
     },
     addCard: async function (boardId, targetClicks) {
         if (targetClicks === 1) {
-            const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${boardId}`, `cardTitle`, "Card title: ", `cardModal${boardId}`, "");
+            const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${boardId}`, `cardTitle`, "Create new card", "Card title: ", `cardModal${boardId}`, "");
 
             domManager.addChild("#body", modalContent);`label>ddind>`
             domManager.addEventListener(`#form-card-title${boardId}`, 'submit', async function (event) {
@@ -36,29 +36,22 @@ export let cardsManager = {
         }
     },
     addStatus: async function (boardId, targetClicks, loadBoardColumns) {
-        const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-status-title${boardId}`, `statusTitle`, "Status title: ", `statusModal${boardId}`, "");
-        domManager.addChild("#body", modalContent);
-        domManager.addEventListener(`#form-status-title${boardId}`, 'submit', async function (event) {
-            event.preventDefault();
-            let statusTitle = event.target.statusTitle.value;
-            const newStatus = await dataHandler.addStatus(statusTitle);
-            await loadBoardColumns(boardId, newStatus.id, statusTitle);
-            event.target.statusTitle.value = '';
-            cardsManager.vampiresDiary();
-        })
+        if (targetClicks === 1) {
+            const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-status-title${boardId}`, `statusTitle`, "Add status", "Status title: ", `statusModal${boardId}`, "");
+            domManager.addChild("#body", modalContent);
+            domManager.addEventListener(`#form-status-title${boardId}`, 'submit', async function (event) {
+                event.preventDefault();
+                let statusTitle = event.target.statusTitle.value;
+                const newStatus = await dataHandler.addStatus(statusTitle, boardId);
+                await loadBoardColumns(boardId, newStatus.id, statusTitle);
+                event.target.statusTitle.value = '';
+            })
+        }
     },
-    vampiresDiary: async function () {
-        const allTargets = [];
-        const boardColumns = document.querySelectorAll(".board-column");
-        boardColumns.forEach(board => {
-            allTargets.push(board);
-        })
-        await dragula(allTargets);
-    }
 }
 
 function editCardTitle(card) {
-    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${card.id}`, "cardTitle", "Card title: ", `cardModal${card.id}`, `${card.title}`, "");
+    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-card-title${card.id}`, "cardTitle", "Edit card title", "Card title: ", `cardModal${card.id}`, `${card.title}`, "");
     domManager.addChild("#body", modalContent);
     domManager.addEventListener(`#form-card-title${card.id}`,'submit', async function (event) {
         event.preventDefault();
@@ -66,6 +59,16 @@ function editCardTitle(card) {
         const response = await dataHandler.editCardTitle(card.id, input)
         document.getElementById(`card-title${card.id}`).textContent = input;
     })
+}
+
+function cardTitleTrigger() {
+    const cardsTitle = document.querySelectorAll('.proba');
+    // console.log(cardsTitle)
+    for (let title of cardsTitle) {
+        title.addEventListener('click', (event) => {
+            console.log(event.currentTarget);
+        })
+    }
 }
 
 async function deleteCardButtonHandler(clickEvent) {

@@ -6,8 +6,8 @@ import { cardsManager } from "./cardsManager.js";
 export let boardsManager = {
     loadBoards: async function () {
         const boards = await dataHandler.getBoards();
-        const statuses = await dataHandler.getStatuses();
         for (let board of boards) {
+            const statuses = await dataHandler.getStatuses(board.id);
             const boardContent = htmlFactory(htmlTemplates.board)(board);
             const deleteButton = htmlFactory(htmlTemplates.delete);
             domManager.addChild("#board-container", boardContent);
@@ -22,8 +22,7 @@ export let boardsManager = {
         }
     },
     addBoard: async function () {
-        const statuses = await dataHandler.getStatuses();
-        const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-board-title", "boardTitle", "Board title: ", "boardModal", "");
+        const modalContent = htmlFactory(htmlTemplates.modalBuilder)("form-board-title", "boardTitle", "Create new board", "Board title: ", "boardModal", "");
         domManager.addChild("#body", modalContent);
         domManager.addEventListener(`#form-board-title`,'submit', async function (event) {
             event.preventDefault();
@@ -33,6 +32,7 @@ export let boardsManager = {
             const deleteBtn = htmlFactory(htmlTemplates.delete);
             domManager.addChild("#board-container", boardContent);
             domManager.addChild(`#toggle-board-button[data-board-id="${newBoard.id}"]`, deleteBtn(newBoard.id));
+            const statuses = await dataHandler.getStatuses();
             statuses.forEach(status => {
                 loadBoardColumns(newBoard.id, status.id, status.title);
             })
@@ -51,7 +51,7 @@ async function deleteBoardButtonHandler(clickEvent) {
 }
 
 function editBoardTitle(board) {
-    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-board-title${board.id}`, "boardTitle", "Board title: ", `boardModal${board.id}`, `${board.title}`, "");
+    const modalContent = htmlFactory(htmlTemplates.modalBuilder)(`form-board-title${board.id}`, "boardTitle", "Edit board title", "Board title: ", `boardModal${board.id}`, `${board.title}`, "");
     domManager.addChild("#body", modalContent);
     domManager.addEventListener(`#form-board-title${board.id}`,'submit', async function (event) {
         event.preventDefault();
@@ -61,11 +61,16 @@ function editBoardTitle(board) {
     })
 }
 
+const allTargets = [];
+
 function loadBoardColumns(boardID, statusID, statusTitle) {
     const boardColumnContent = htmlFactory(htmlTemplates.boardColumn)(boardID, statusID);
     const boardColumnTitleContent = htmlFactory(htmlTemplates.boardColumnTitle)(statusID, statusTitle);
-    domManager.addChild(`#board-body[data-board-id="${boardID}"]`, boardColumnContent)
-    domManager.addChild(`.board-column[data-board-id="${boardID}"][data-status-id="${statusID}"]`, boardColumnTitleContent)
+    domManager.addChild(`#board-body[data-board-id="${boardID}"]`, boardColumnContent);
+    domManager.addChild(`.board-column[data-board-id="${boardID}"][data-status-id="${statusID}"]`, boardColumnTitleContent);
+    const boardColumn = document.querySelector(`.board-column[data-board-id="${boardID}"][data-status-id="${statusID}"]`);
+    allTargets.push(boardColumn);
+    dragula(allTargets);
 }
 
 function showHideButtonHandler(clickEvent) {
@@ -76,6 +81,5 @@ function showHideButtonHandler(clickEvent) {
         cardsManager.loadCards(boardId, target.clicks);
         cardsManager.addCard(boardId, target.clicks);
         cardsManager.addStatus(boardId, target.clicks, loadBoardColumns);
-        cardsManager.vampiresDiary();
     }
 }

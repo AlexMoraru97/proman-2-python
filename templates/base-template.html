@@ -24,12 +24,14 @@
         <script type="module" src="{{ url_for('static', filename='js/dragula.js') }}" defer></script>
     </head>
     <body id="body">
-      <nav class="navbar navbar-light bg-info">
+      <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
           <span class="navbar-brand mb-0 h1">ProMan</span>
-          <a href="#" data-bs-toggle="modal" data-bs-target="#form-registration"> Register </a>
-          <a href="#" data-bs-toggle="modal" data-bs-target="#form-login"> Log in </a>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#boardModal" data-bs-whatever="@mdo">Create new board</button>
+          <a href="#" id="username" {% if not username %} hidden {% endif %}>{% if username %} {{ 'logged in as '+username }} {% endif %}</a>
+          <a href="#" id="registration" data-bs-toggle="modal" data-bs-target="#registerModal" {% if username %} hidden {% endif %}> Register </a>
+          <a href="#" id="login" data-bs-toggle="modal" data-bs-target="#loginModal" {% if username %} hidden {% endif %}> Log in </a>
+          <a href="#" id="logout" {% if not username %} hidden {% endif %}> Log out </a>
+          <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#boardModal" data-bs-whatever="@mdo">Create new board</button>
         </div>
       </nav>
       {% block body_content %}{% endblock %}

@@ -9,7 +9,6 @@ def establish_connection(connection_data=None):
     :connection_data: Connection string attributes
     :returns: psycopg2.connection
     """
-
     if connection_data is None:
         connection_data = get_connection_data()
     try:
@@ -17,15 +16,13 @@ def establish_connection(connection_data=None):
                                                                      connection_data['user'],
                                                                      connection_data['host'],
                                                                      connection_data['password'])
-        connection = psycopg2.connect(
-            'postgres://ocgyssxzxltauz:fd5f856a3a45c1c52d9d64ffdd4d7601524d31afbc6fd27eaace7ee1cc160825@ec2-54-228-99-58.eu-west-1.compute.amazonaws.com:5432/d4ei5ig7rtpeiu',
-            sslmode='require')
-        connection.autocommit = True
+        conn = psycopg2.connect(connect_str)
+        conn.autocommit = True
     except psycopg2.DatabaseError as e:
         print("Cannot connect to database.")
         print(e)
     else:
-        return connection
+        return conn
 
 
 def get_connection_data(db_name=None):

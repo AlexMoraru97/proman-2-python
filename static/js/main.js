@@ -7,7 +7,6 @@ function init() {
   usersManager.signUp();
   usersManager.signIn();
   usersManager.signOut();
-  // boardsManager.register();
 }
 
 init();

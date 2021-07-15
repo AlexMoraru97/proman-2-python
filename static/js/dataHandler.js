@@ -10,16 +10,16 @@ export let dataHandler = {
     getBoard: async function(boardId) {
         // the board is retrieved and then the callback function is called with the board
     },
-    getStatuses: async function () {
-        let response = await apiGet("/get-statuses")
+    getStatuses: async function (board_id) {
+        let response = await apiGet(`/api/get-statuses/${board_id}`)
         return response
         // the statuses are retrieved and then the callback function is called with the statuses
     },
     getStatus: async function (statusId) {
         // the status is retrieved and then the callback function is called with the status
     },
-    addStatus: async function (statusTitle) {
-      let response = await apiPost("/add-status", {"statusTitle": statusTitle});
+    addStatus: async function (statusTitle, boardId) {
+      let response = await apiPost("/api/add-status", {"statusTitle": statusTitle, "boardId": boardId});
       return response;
     },
     getCardsByBoardId: async function (boardId) {
@@ -34,7 +34,7 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        return false;
+        // return false;
         // creates new board, saves it and calls the callback function with its data
     },
     createNewCard: async function (cardTitle, boardId, statusId) {
@@ -42,7 +42,7 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        return false;
+        // return false;
         // creates new card, saves it and calls the callback function with its data
     },
     editCardTitle: async function (cardId, newTitle) {
@@ -58,36 +58,36 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        return false;
+        // return false;
     },
     deleteCard: async function (cardId) {
-    let request = await apiDelete(`/delete-card/${cardId}`);
-    if (request) {
-        return request;
-    }
-    return false;
+        let request = await apiDelete(`/delete-card/${cardId}`);
+        if (request) {
+            return request;
+        }
+    // return false;
     },
 
     addUser: async function (username, password) {
-        let request = await apiPost("/register", {"username": username, "password": password});
+        let request = await apiPost("/api/register", {"username": username, "password": password});
         if (request) {
             return request;
         }
-        return false;
+        // return false;
     },
     userLogout: async function () {
-        let request = await apiGet("/logout");
+        let request = await apiGet("/api/logout");
         if (request) {
             return request;
         }
-        return false;
+        // return false;
     },
     userLogin: async function (username, password) {
-        let request = await apiPost("/login", {"username": username, "password": password});
+        let request = await apiPost("/api/login", {"username": username, "password": password});
         if (request) {
             return request;
         }
-        return false;
+        // return false;
     },
 };
 
@@ -107,7 +107,7 @@ async function apiPost(url, payload) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload),
     })
-    if (response.status === 200) {
+    if (response.ok) {
       let data = await response.json();
       return data;
     }
