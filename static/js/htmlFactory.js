@@ -92,7 +92,7 @@ function modalBuilder(formId, elementTitle, titleLabel, elementLabel, modalTarge
                                       </div><br>
                                       <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                          <button type="submit" class="style-mode btn btn-success" data-bs-dismiss="modal">Save</button>
+                                          <button type="submit" class="style-mode btn btn-success" data-bs-dismiss="modal">${elementTitle === 'login' ? 'Login' : 'Register'}</button>
                                       </div>`}                               
                             </form>
                         </div>
