@@ -83,8 +83,10 @@ def edit_card_status(card_id: int, status_id, new_status_id):
 @json_response
 def add_board():
     new_board_name = request.json.get("boardTitle")
-    idx = queires.add_board(new_board_name)['id']
-    return {'id': idx, 'title': new_board_name}
+    board_id = queires.add_board(new_board_name)['id']
+    for status_id in range(1, 5):
+        queires.add_board_status(board_id, status_id)
+    return {'id': board_id, 'title': new_board_name}
 
 
 @app.route("/add-card", methods=["POST"])

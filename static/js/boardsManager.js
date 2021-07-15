@@ -32,7 +32,7 @@ export let boardsManager = {
             const deleteBtn = htmlFactory(htmlTemplates.delete);
             domManager.addChild("#board-container", boardContent);
             domManager.addChild(`#toggle-board-button[data-board-id="${newBoard.id}"]`, deleteBtn(newBoard.id));
-            const statuses = await dataHandler.getStatuses();
+            const statuses = await dataHandler.getStatuses(newBoard.id);
             statuses.forEach(status => {
                 loadBoardColumns(newBoard.id, status.id, status.title);
             })
