@@ -46,14 +46,6 @@ var doc = document;
 var documentElement = doc.documentElement;
 
 async function dragula (initialContainers, options) {
-  // console.log(initialContainers);
-  // console.log(initialContainers[0].children)
-  // console.log(initialContainers)
-  // initialContainers = initialContainers
-  // for (let cont in initialContainers) {
-  //   console.log(typeof cont)
-  // }
-  // console.log(initialContainers[0].children)
   var len = arguments.length;
   if (len === 1 && Array.isArray(initialContainers) === false) {
     options = initialContainers;
