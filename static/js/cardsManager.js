@@ -13,7 +13,7 @@ export let cardsManager = {
                 const content = cardBuilder(card);
                 domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="${card.status_id}"]`, content);
                 domManager.addEventListener(`.card-remove[data-card-id="${card.id}"]`, "click", deleteCardButtonHandler);
-                editCardTitle(card);
+                // editCardTitle(card);
             }
 
         }
@@ -31,7 +31,7 @@ export let cardsManager = {
                 domManager.addChild(`.board-column[data-board-id="${boardId}"][data-status-id="1"]`, cardContent);
                 domManager.addEventListener(`.card-remove[data-card-id="${newCard.id}"]`, "click", deleteCardButtonHandler)
                 event.target.cardTitle.value = '';
-                editCardTitle(newCard);
+                // editCardTitle(newCard);
             })
         }
     },
