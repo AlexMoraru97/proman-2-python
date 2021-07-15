@@ -9,38 +9,15 @@ def establish_connection(connection_data=None):
     :connection_data: Connection string attributes
     :returns: psycopg2.connection
     """
-    return os.environ.get('DATABASE_URL')
-    # if connection_data is None:
-    #     connection_data = get_connection_data()
-    # try:
-    #     connect_str = "dbname={} user={} host={} password={}".format(connection_data['dbname'],
-    #                                                                  connection_data['user'],
-    #                                                                  connection_data['host'],
-    #                                                                  connection_data['password'])
-    #     conn = psycopg2.connect(connect_str)
-    #     conn.autocommit = True
-    # except psycopg2.DatabaseError as e:
-    #     print("Cannot connect to database.")
-    #     print(e)
-    # else:
-    #     return conn
-
-
-def get_connection_data(db_name=None):
-    """
-    Give back a properly formatted dictionary based on the environment variables values which are started
-    with :MY__PSQL_: prefix
-    :db_name: optional parameter. By default it uses the environment variable value.
-    """
-    if db_name is None:
-        db_name = os.environ.get('MY_PSQL_DBNAME')
-
-    return {
-        'dbname': db_name,
-        'user': os.environ.get('MY_PSQL_USER'),
-        'host': os.environ.get('MY_PSQL_HOST'),
-        'password': os.environ.get('MY_PSQL_PASSWORD')
-    }
+    try:
+        connect_str = os.environ.get('DATABASE_URL')
+        conn = psycopg2.connect(connect_str)
+        conn.autocommit = True
+    except psycopg2.DatabaseError as e:
+        print("Cannot connect to database.")
+        print(e)
+    else:
+        return conn
 
 
 def execute_select(statement, variables=None, fetchall=True):
