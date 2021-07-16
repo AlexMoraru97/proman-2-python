@@ -26,7 +26,7 @@ export function htmlFactory(template) {
             return deleteButtonBuilder
         default:
             console.error("Undefined template: " + template)
-            return () => { return "" }
+            return
     }
 }
 

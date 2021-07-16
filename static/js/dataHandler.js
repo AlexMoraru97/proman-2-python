@@ -34,15 +34,12 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        // return false;
-        // creates new board, saves it and calls the callback function with its data
     },
     createNewCard: async function (cardTitle, boardId, statusId) {
         let request = await apiPost("/add-card", {"cardTitle": cardTitle, "boardId": boardId, "statusId": statusId});
         if (request) {
             return request;
         }
-        // return false;
         // creates new card, saves it and calls the callback function with its data
     },
     editCardTitle: async function (cardId, newTitle) {
@@ -58,14 +55,12 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        // return false;
     },
     deleteCard: async function (cardId) {
         let request = await apiDelete(`/delete-card/${cardId}`);
         if (request) {
             return request;
         }
-    // return false;
     },
 
     addUser: async function (username, password) {
@@ -73,21 +68,18 @@ export let dataHandler = {
         if (request) {
             return request;
         }
-        // return false;
     },
     userLogout: async function () {
         let request = await apiGet("/api/logout");
         if (request) {
             return request;
         }
-        // return false;
     },
     userLogin: async function (username, password) {
         let request = await apiPost("/api/login", {"username": username, "password": password});
         if (request) {
             return request;
         }
-        // return false;
     },
 };
 

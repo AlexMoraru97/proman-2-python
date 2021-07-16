@@ -147,7 +147,7 @@ def add_board_status(board_id, status_id):
 def delete_board(board_id):
     result = data_manager.execute_select(
         """
-            DELETE FROM board_statuses
+            DELETE FROM b
             WHERE board_id=%(board_id)s;
             
             DELETE FROM cards
